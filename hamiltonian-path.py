@@ -1,18 +1,17 @@
 import subprocess
 from argparse import ArgumentParser
-"""
+
 def load_instance(input_file_name):
     # read the input instance
-    tiles = []
+    edges = [] #more precisely, this will be a list where the first item is the number of vertices and the next items are the edges with start and end vertex
     with open(input_file_name, "r") as file:
         for line in file:
             line = line.split()
             if line:
                 line = [int(i) for i in line]
-                tiles.extend(line)
-
-    return tiles
-
+                edges.append(line)
+    return edges
+"""
 def encode(instance):
     # given the instance, create a cnf formula, i.e. a list of lists of integers
     # also return the total number of variables used
@@ -45,6 +44,7 @@ def call_solver(cnf, nr_vars, output_name, solver_name, verbosity):
     # call the solver and return the output
     return subprocess.run(['./' + solver_name, '-model', '-verb=' + str(verbosity) , output_name], stdout=subprocess.PIPE)
 
+#edit
 def print_result(model):
     return (model is not None) #there exists a model of the problem -> true, otherwise false
 
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-i",
         "--input",
-        default="input.in",
+        default="instances/input.in",
         type=str,
         help=(
             "The instance file."
@@ -93,6 +93,8 @@ if __name__ == "__main__":
 
     # get the input instance
     instance = load_instance(args.input)
+    N_edges = instance[0][0]
+    edges = instance[1:]
 
     # encode the problem to create CNF formula
     cnf, nr_vars = encode(instance)
